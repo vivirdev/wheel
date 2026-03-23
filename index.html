@@ -59,8 +59,7 @@ body::before {
 .suspense-overlay.active {
   opacity: 1;
 }
-.wheel-stage {
-  position: relative;
+.suspense-overlay.active ~ .page-content .wheel-stage {
   z-index: 11;
 }
 
@@ -122,28 +121,41 @@ body::before {
   font-size: clamp(16px, 2.4vw, 21px);
 }
 
-/* Wheel + Button area — always fits in viewport */
+/* Wheel + Button area */
 .wheel-area {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   width: 100%;
-  gap: 0;
   position: relative;
+  z-index: 1;
 }
 
 .wheel-stage {
   position: relative;
-  width: clamp(500px, 88vw, 920px);
-  height: clamp(500px, 88vw, 920px);
-  max-width: 95vh;
-  max-height: 95vh;
+  width: 90vw;
+  height: 90vw;
+  max-width: 500px;
+  max-height: 500px;
   aspect-ratio: 1;
   flex-shrink: 0;
   opacity: 0;
   animation: fadeScale 1s ease-out 0.8s forwards;
+}
+
+/* Desktop: side-by-side layout with big wheel */
+@media (min-width: 769px) {
+  .wheel-area {
+    flex-direction: row;
+    height: 100vh;
+  }
+  .wheel-stage {
+    width: clamp(500px, 88vw, 920px);
+    height: clamp(500px, 88vw, 920px);
+    max-width: 95vh;
+    max-height: 95vh;
+  }
 }
 
 @keyframes wheelPulse {
@@ -216,19 +228,29 @@ body::before {
   height: 56px;
 }
 
-/* Right side panel — fixed to viewport right edge */
+/* Buttons */
 .btn-row {
-  position: fixed;
-  right: 24px;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  flex-direction: row;
+  gap: 12px;
   align-items: center;
   z-index: 30;
   opacity: 0;
   animation: fadeUp 0.8s ease-out 1s forwards;
+  margin-top: 16px;
+}
+
+/* Desktop: fixed panel on right side */
+@media (min-width: 769px) {
+  .btn-row {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0;
+  }
 }
 
 /* Connector bar between buttons — hidden until reset shows */
@@ -458,11 +480,34 @@ body::before {
 }
 
 /* Responsive */
+/* Mobile / tablet: buttons below wheel */
+@media (max-width: 768px) {
+  .page-content { padding: 12px 10px 0; }
+  .title-img { width: clamp(180px, 60vw, 320px); margin-bottom: 8px; }
+  .subtitle { font-size: 13px; line-height: 1.5; margin-bottom: 12px; max-width: 90vw; }
+  .subtitle strong { font-size: 14px; margin-top: 4px; }
+  .site-header { padding: 10px 16px; }
+  .header-logo { height: 28px; }
+
+  .btn-row {
+    position: static;
+    flex-direction: row;
+    transform: none;
+    margin-top: 16px;
+    margin-bottom: 20px;
+  }
+  .btn-connector { display: none !important; }
+  .spin-btn { width: 70px; height: 70px; font-size: 14px; }
+  .reset-btn { width: 46px; height: 46px; font-size: 11px; }
+  .modal { padding: 28px 20px 24px; }
+  .modal-question { font-size: 20px !important; }
+}
+
 @media (max-width: 480px) {
-  .page-content { padding: 20px 16px 40px; }
-  .wheel-stage { margin-bottom: 30px; }
-  .spin-btn { padding: 14px 44px; }
-  .modal { padding: 36px 24px 28px; }
+  .subtitle { display: none; }
+  .page-content { padding: 8px 6px 0; }
+  .title-img { width: 55vw; margin-bottom: 4px; }
+  .wheel-stage { width: 95vw; height: 95vw; }
 }
 </style>
 </head>
