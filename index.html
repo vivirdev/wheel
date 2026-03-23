@@ -727,8 +727,7 @@ function drawWheel(rotation, highlightIndex) {
     ctx.clip();
 
     const isDark = seg.textColor === '#1a2a3a';
-    const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const fontSize = Math.max(11, Math.min(16, rootFontSize * 0.9));
+    const fontSize = Math.max(10, Math.min(15, size / 55));
     ctx.font = `700 ${fontSize}px Heebo, sans-serif`;
     ctx.fillStyle = isDark ? '#1a2a3a' : 'white';
     ctx.textAlign = 'right';
