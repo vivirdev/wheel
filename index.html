@@ -72,7 +72,7 @@ body::before {
   align-items: center;
   width: 100%;
   max-width: 900px;
-  padding: 30px 20px 30px;
+  padding: 30px 20px 0px;
 }
 
 /* Header */
@@ -125,20 +125,23 @@ body::before {
 /* Wheel + Button area — always fits in viewport */
 .wheel-area {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   height: 100vh;
   width: 100%;
+  gap: 0;
+  position: relative;
 }
 
 .wheel-stage {
   position: relative;
-  width: clamp(400px, 85vw, 800px);
-  height: clamp(400px, 85vw, 800px);
-  max-width: 80vh;
-  max-height: 80vh;
-  margin-bottom: 24px;
+  width: clamp(500px, 88vw, 920px);
+  height: clamp(500px, 88vw, 920px);
+  max-width: 95vh;
+  max-height: 95vh;
+  aspect-ratio: 1;
+  flex-shrink: 0;
   opacity: 0;
   animation: fadeScale 1s ease-out 0.8s forwards;
 }
@@ -213,76 +216,143 @@ body::before {
   height: 56px;
 }
 
-/* Buttons */
+/* Right side panel — fixed to viewport right edge */
 .btn-row {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  gap: 0;
   align-items: center;
+  z-index: 30;
   opacity: 0;
   animation: fadeUp 0.8s ease-out 1s forwards;
 }
 
-.reset-btn {
-  background: rgba(255,255,255,0.1);
-  color: white;
-  font-family: 'Heebo', sans-serif;
-  font-size: clamp(18px, 2.5vw, 22px);
-  font-weight: 700;
-  padding: 16px 36px;
-  border: 2px solid rgba(255,255,255,0.25);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* Connector bar between buttons — hidden until reset shows */
+.btn-connector {
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, #2A4A5A, #0A2A3A);
+  border-radius: 2px;
   display: none;
 }
-
-.reset-btn.visible {
+.btn-connector.visible {
   display: block;
-}
-
-.reset-btn:hover {
-  background: rgba(255,255,255,0.2);
-  border-color: rgba(255,255,255,0.4);
-  transform: translateY(-2px);
 }
 
 /* Spin Button */
 .spin-btn {
   background: linear-gradient(135deg, var(--cyan) 0%, #00B8D4 100%);
-  color: white;
+  color: #fff;
   font-family: 'Heebo', sans-serif;
-  font-size: clamp(22px, 3vw, 28px);
-  font-weight: 700;
-  padding: 16px 60px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  padding: 0;
   border: none;
-  border-radius: 12px;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
   cursor: pointer;
-  box-shadow: 0 6px 30px rgba(0, 212, 232, 0.4), 0 2px 10px rgba(0,0,0,0.3);
-  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 15px rgba(0, 212, 232, 0.35),
+    0 8px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -2px 4px rgba(0,0,0,0.2);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
+/* Glossy highlight */
 .spin-btn::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-  border-radius: inherit;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 50% 50% 40% 40%;
+  pointer-events: none;
+}
+
+/* Outer ring glow */
+.spin-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 212, 232, 0.2);
+  pointer-events: none;
+  transition: all 0.3s ease;
 }
 
 .spin-btn:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 40px rgba(0, 212, 232, 0.6), 0 4px 15px rgba(0,0,0,0.3);
+  transform: scale(1.12);
+  box-shadow:
+    0 6px 25px rgba(0, 212, 232, 0.5),
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+.spin-btn:hover:not(:disabled)::after {
+  border-color: rgba(0, 212, 232, 0.5);
+  inset: -6px;
 }
 
 .spin-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
+  transform: scale(0.95);
+  box-shadow:
+    0 2px 8px rgba(0, 212, 232, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 2px 6px rgba(0,0,0,0.3);
 }
 
 .spin-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
+  filter: saturate(0.3);
+}
+
+/* Reset Button */
+.reset-btn {
+  background: linear-gradient(135deg, #1A2A3A 0%, #0A1820 100%);
+  color: rgba(255,255,255,0.8);
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0;
+  width: 56px;
+  height: 56px;
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.reset-btn.visible {
+  display: flex;
+}
+
+.reset-btn:hover {
+  background: linear-gradient(135deg, #2A3A4A 0%, #1A2830 100%);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+  transform: scale(1.08);
 }
 
 /* Modal */
@@ -443,7 +513,8 @@ body::before {
 
     <!-- Buttons -->
     <div class="btn-row">
-      <button class="spin-btn" id="spinBtn" onclick="spinWheel()">סובבו אותי</button>
+      <button class="spin-btn" id="spinBtn" onclick="spinWheel()">סובבו<br>אותי</button>
+      <div class="btn-connector"></div>
       <button class="reset-btn" id="resetBtn" onclick="resetWheel()">איפוס</button>
     </div>
   </div>
@@ -1031,9 +1102,8 @@ function spinWheel() {
         suspense.classList.remove('active');
         showResult(actualIndex);
         document.getElementById('spinBtn').disabled = activeSegments.length === 0;
-        if (activeSegments.length > 0) {
-          document.getElementById('resetBtn').classList.add('visible');
-        }
+        document.getElementById('resetBtn').classList.add('visible');
+        document.querySelector('.btn-connector').classList.add('visible');
       });
     }
   }
@@ -1047,6 +1117,7 @@ function resetWheel() {
   activeSegments = shuffleMaxContrast([...SEGMENTS]);
   drawWheel(currentRotation);
   document.getElementById('resetBtn').classList.remove('visible');
+  document.querySelector('.btn-connector').classList.remove('visible');
 }
 
 function showResult(index) {
@@ -1065,16 +1136,15 @@ function showResult(index) {
       currentRotation = 0;
       drawWheel(currentRotation);
       stage.classList.remove('pulse');
-    }, 250); // remove at the shrink point of the pulse
-  }, 400); // short delay so user sees where it landed
-
-  if (remaining === 0) {
-    document.getElementById('resetBtn').classList.add('visible');
-  }
+    }, 250);
+  }, 400);
 }
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('active');
+  // Ensure spin button is re-enabled after closing
+  spinning = false;
+  document.getElementById('spinBtn').disabled = activeSegments.length === 0;
 }
 
 // Close modal on overlay click
