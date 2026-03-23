@@ -987,6 +987,53 @@ function spinWheel() {
   spinning = true;
   document.getElementById('spinBtn').disabled = true;
 
+  // Last question — special dramatic reveal without spinning
+  if (activeSegments.length === 1) {
+    const stage = document.querySelector('.wheel-stage');
+    const suspense = document.getElementById('suspenseOverlay');
+    suspense.classList.add('active');
+
+    // Pulse the wheel 3 times with growing intensity
+    let pulseCount = 0;
+    const pulseInterval = setInterval(() => {
+      pulseCount++;
+      stage.style.transform = `scale(${1 + pulseCount * 0.03})`;
+      setTimeout(() => { stage.style.transform = 'scale(1)'; }, 200);
+      if (pulseCount >= 3) {
+        clearInterval(pulseInterval);
+        setTimeout(() => {
+          flashWinningSegment(0, () => {
+            suspense.classList.remove('active');
+            // Play landing sound
+            try {
+              const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              const t = audioCtx.currentTime;
+              const notes = [392, 494, 587, 659, 784];
+              notes.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = i < 3 ? 'triangle' : 'sine';
+                osc.frequency.value = freq;
+                const s = t + i * 0.08;
+                gain.gain.setValueAtTime(0, s);
+                gain.gain.linearRampToValueAtTime(0.1, s + 0.02);
+                gain.gain.setValueAtTime(0.1, s + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.001, s + 0.5);
+                osc.start(s); osc.stop(s + 0.5);
+              });
+            } catch(e) {}
+            showResult(0);
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('resetBtn').classList.add('visible');
+            document.querySelector('.btn-connector').classList.add('visible');
+          });
+        }, 300);
+      }
+    }, 400);
+    return;
+  }
+
   const ARC = getArc();
   const NUM = getNumSegments();
   const winIndex = getRandomSegmentIndex();
